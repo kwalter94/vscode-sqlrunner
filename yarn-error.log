@@ -1,0 +1,74 @@
+Arguments: 
+  /home/kwalter/.nvm/versions/node/v12.16.2/bin/node /usr/share/yarn/bin/yarn.js install
+
+PATH: 
+  /home/kwalter/.pyenv/shims:/home/kwalter/.pyenv/bin:/home/kwalter/.nvm/versions/node/v12.16.2/bin:/home/kwalter/.poetry/bin:/home/kwalter/.local/bin:/home/kwalter/bin:/home/kwalter/.rvm/gems/ruby-2.6.3/bin:/home/kwalter/.rvm/gems/ruby-2.6.3@global/bin:/usr/share/rvm/rubies/ruby-2.6.3/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/kwalter/.dotnet/tools:/usr/share/rvm/bin:/home/kwalter/Android/Sdk/emulator:/home/kwalter/Android/Sdk/tools:/home/kwalter/Android/Sdk/tools/bin:/home/kwalter/Android/Sdk/platform-tools:/home/kwalter/.poetry/bin:/home/kwalter/.yarn/bin
+
+Yarn version: 
+  1.22.5
+
+Node version: 
+  12.16.2
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: https://registry.yarnpkg.com/typescript/-/typescript-4.0.3.tgz: ESOCKETTIMEDOUT
+      at ClientRequest.<anonymous> (/usr/share/yarn/lib/cli.js:141376:19)
+      at Object.onceWrapper (events.js:416:28)
+      at ClientRequest.emit (events.js:310:20)
+      at TLSSocket.emitRequestTimeout (_http_client.js:714:9)
+      at Object.onceWrapper (events.js:416:28)
+      at TLSSocket.emit (events.js:310:20)
+      at TLSSocket.Socket._onTimeout (net.js:479:8)
+      at listOnTimeout (internal/timers.js:549:17)
+      at processTimers (internal/timers.js:492:7)
+
+npm manifest: 
+  {
+    "name": "sqlrunner",
+  	"displayName": "SqlRunner",
+  	"description": "Run some SQL in MySQL client.",
+  	"version": "0.0.1",
+  	"engines": {
+  		"vscode": "^1.50.0"
+  	},
+  	"categories": [
+  		"Other"
+  	],
+  	"activationEvents": [
+          "onCommand:sqlrunner.helloWorld"
+  	],
+  	"main": "./extension.js",
+  	"contributes": {
+  		"commands": [{
+              "command": "sqlrunner.helloWorld",
+              "title": "Hello World"
+  
+  		}]
+  	},
+  	"scripts": {
+  		"lint": "eslint .",
+  		"pretest": "yarn run lint",
+  		"test": "node ./test/runTest.js"
+  	},
+  	"devDependencies": {
+          "@types/vscode": "^1.50.0",
+          "@types/glob": "^7.1.3",
+          "@types/mocha": "^8.0.0",
+          "@types/node": "^12.11.7",
+          "eslint": "^7.9.0",
+          "glob": "^7.1.6",
+          "mocha": "^8.1.3",
+          "typescript": "^4.0.2",
+          "vscode-test": "^1.4.0"
+      }
+  
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
