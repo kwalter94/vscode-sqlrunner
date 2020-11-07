@@ -1,5 +1,5 @@
 {
-  "name": "sqlrunner",
+	"name": "sqlrunner",
 	"displayName": "SqlRunner",
 	"description": "Run some SQL in MySQL client.",
 	"version": "0.0.1",
@@ -10,15 +10,16 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:sqlrunner.helloWorld"
+		"onCommand:sqlrunner.runQuery"
 	],
 	"main": "./extension.js",
 	"contributes": {
-		"commands": [{
-            "command": "sqlrunner.helloWorld",
-            "title": "Hello World"
-
-		}]
+		"commands": [
+			{
+				"command": "sqlrunner.runQuery",
+				"title": "Run SQL"
+			}
+		]
 	},
 	"scripts": {
 		"lint": "eslint .",
@@ -26,15 +27,17 @@
 		"test": "node ./test/runTest.js"
 	},
 	"devDependencies": {
-        "@types/vscode": "^1.50.0",
-        "@types/glob": "^7.1.3",
-        "@types/mocha": "^8.0.0",
-        "@types/node": "^12.11.7",
-        "eslint": "^7.9.0",
-        "glob": "^7.1.6",
-        "mocha": "^8.1.3",
-        "typescript": "^4.0.2",
-        "vscode-test": "^1.4.0"
-    }
-
+		"@types/glob": "^7.1.3",
+		"@types/mocha": "^8.0.0",
+		"@types/node": "^12.11.7",
+		"@types/vscode": "^1.50.0",
+		"eslint": "^7.9.0",
+		"glob": "^7.1.6",
+		"mocha": "^8.1.3",
+		"typescript": "^4.0.2",
+		"vscode-test": "^1.4.0"
+	},
+	"dependencies": {
+		"mysql": "^2.18.1"
+	}
 }
