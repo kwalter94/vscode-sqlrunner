@@ -3,7 +3,8 @@
 const vscode = require('vscode');
 const SqlConnection = require('./sqlrunner/sql_connection');
 const SqlResultsViewer = require('./sqlrunner/vscode/sql_results_viewer');
-const {getDatabaseConnectionString, getQuery} = require('./sqlrunner/vscode');
+const { getDatabaseConnectionString, getQuery } = require('./sqlrunner/vscode');
+const { hrtime } = require('process');
 
 
 let state = {connection: null, resultsViewer: null};
@@ -36,8 +37,22 @@ async function getExtensionState() {
     }
 }
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+function nanosToSeconds(nanos) {
+    return Number(nanos) / 1_000_000_000;
+}
+
+/**
+ * Time the execution of an async operation.
+ * 
+ * @param {() => Promise} operation 
+ */
+async function timeIt(operation) {
+    const startTime = hrtime.bigint();
+    const result = await operation();
+    const endTime = hrtime.bigint();
+
+    return [nanosToSeconds(endTime - startTime), result];
+}
 
 /**
  * @param {vscode.ExtensionContext} context
@@ -55,11 +70,11 @@ function activate(context) {
             const query = await getQuery();
 
             if (query) {
-                // TODO: Setup a query timer...
-                const results = await state.connection.runQuery(query);
+                const [executionTime, results] = await timeIt(() => state.connection.runQuery(query));
+
                 state.resultsViewer.renderSqlResults(results);
 
-                vscode.window.showInformationMessage(`Query executed in approximately ? seconds`);
+                vscode.window.showInformationMessage(`Query executed in approximately ${executionTime} seconds`);
             } else {
                 vscode.window.showErrorMessage("No query selected!");
             }
