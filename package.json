@@ -19,6 +19,13 @@
 				"command": "sqlrunner.runQuery",
 				"title": "Run SQL"
 			}
+		],
+		"keybindings": [
+			{
+				"key": "ctrl+x q",
+				"command": "sqlrunner.runQuery",
+				"when": "editorTextFocus"
+			}
 		]
 	},
 	"scripts": {
