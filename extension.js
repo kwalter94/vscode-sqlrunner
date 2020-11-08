@@ -24,11 +24,15 @@ async function getExtensionState() {
         }
 
         if (!state.resultsViewer) {
-            state.resultsViewer = new SqlResultsViewer(() => {
-                state.connection?.close();
-                state.connection = null;
-                state.resultsViewer = null;
-            });
+            state.resultsViewer = new SqlResultsViewer(
+                {
+                    onDispose: () => {
+                        state.connection?.close();
+                        state.connection = null;
+                        state.resultsViewer = null;
+                    }
+                }
+            );
         }
 
         return state;
@@ -37,8 +41,10 @@ async function getExtensionState() {
     }
 }
 
+const NANOS_PER_SECOND = 1_000_000_000;
+
 function nanosToSeconds(nanos) {
-    return Number(nanos) / 1_000_000_000;
+    return Number(nanos) / NANOS_PER_SECOND;
 }
 
 /**

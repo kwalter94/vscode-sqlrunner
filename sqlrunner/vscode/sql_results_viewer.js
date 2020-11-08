@@ -3,7 +3,7 @@ const vscode = require('vscode');
 const VIEW_TYPE = 'SqlResultsViewer';
 
 class SqlResultsViewer {
-    constructor(onDispose) {
+    constructor({onDispose}) {
         this.view = this.createWebView(onDispose);
     }
 
