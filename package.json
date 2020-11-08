@@ -22,7 +22,7 @@
 		],
 		"keybindings": [
 			{
-				"key": "ctrl+x q",
+				"key": "shift+q e",
 				"command": "sqlrunner.runQuery",
 				"when": "editorTextFocus"
 			}
