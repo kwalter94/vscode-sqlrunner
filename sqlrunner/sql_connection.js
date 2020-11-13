@@ -3,7 +3,7 @@
 //        out how to deal with @ in any part of the connection string
 //        since that character has has a special meaning in the
 //        connection string.
-const CONNECTION_STRING_REGEX = /(\w+):\/\/(\w+):([^@]+)@(\w+):(\d+)\/(\w+)/i;
+const CONNECTION_STRING_REGEX = /(?<dbms>\w+):\/\/((?<username>\w+[a-z0-9]*):(?<password>.+)@)?(?<host>[a-z0-9-.~]+)(\:(?<port>\d+))?\/(?<database>\w+[a-z0-9]*)/img;
 
 class SqlConnection {
     /**
@@ -29,6 +29,10 @@ class SqlConnection {
      */
     static fromConnectionString(connectionString) {
         const {dbms, ...connectionParams} = this._parseConnectionString(connectionString);
+
+        if (!dbms) {
+            throw new Error(`Invalid connection string: ${connectionString}`);
+        }
 
         return this.from(dbms, connectionParams);
     }
@@ -70,7 +74,7 @@ class SqlConnection {
     static _parseConnectionString(connectionString) {
         const match = CONNECTION_STRING_REGEX.exec(connectionString);
 
-        const [dbms, username, password, host, port, database] = match?.slice(1, 7) || [];
+        const {dbms, username, password, host, port, database} = match?.groups || {};
 
         return {
             dbms,

@@ -76,11 +76,13 @@ function activate(context) {
             const query = await getQuery();
 
             if (query) {
-                const [executionTime, results] = await timeIt(() => state.connection.runQuery(query));
-
-                state.resultsViewer.renderSqlResults(results);
-
-                vscode.window.showInformationMessage(`Query executed in approximately ${executionTime} seconds`);
+                try {
+                    const [executionTime, results] = await timeIt(() => state.connection.runQuery(query));
+                    state.resultsViewer.renderSqlResults(results);
+                    vscode.window.showInformationMessage(`Query executed in approximately ${executionTime} seconds`);
+                } catch (e) {
+                    vscode.window.showErrorMessage(`Query failed: ${e}`);
+                }
             } else {
                 vscode.window.showErrorMessage("No query selected!");
             }
