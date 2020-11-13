@@ -1,8 +1,6 @@
 const mysql = require('mysql');
 
-function unpackObject(object, properties) {
-    return properties.map(property => object[property]);
-}
+const {unpackObject} = require('../utils');
 
 class MySqlConnectionAdapter {
     constructor(user, password, host, port, database) {

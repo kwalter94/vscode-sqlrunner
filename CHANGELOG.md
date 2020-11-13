@@ -7,3 +7,4 @@ All notable changes to the "sqlrunner" extension will be documented in this file
 ### Added
 
 - MySQL connection adapter
+- Postgres connection adapter
