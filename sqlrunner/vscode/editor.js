@@ -1,5 +1,5 @@
 /**
- * Helper functions for interacting with Visual Studio.
+ * Helper functions for interacting with the Visual Studio Code editor.
  */
 
 const vscode = require('vscode');
