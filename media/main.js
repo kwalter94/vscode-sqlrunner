@@ -1,0 +1,3 @@
+$(function() {
+    $('#results-table').DataTable();
+});

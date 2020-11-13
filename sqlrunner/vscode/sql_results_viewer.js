@@ -3,16 +3,27 @@ const vscode = require('vscode');
 const VIEW_TYPE = 'SqlResultsViewer';
 
 class SqlResultsViewer {
-    constructor({onDispose}) {
+    /**
+     * @param {vscode.Uri} extensionUri 
+     */
+    constructor(extensionUri, {onDispose}) {
+        this.extensionUri = extensionUri;
         this.view = this.createWebView(onDispose);
     }
 
     renderSqlResults(sqlResults) {
         this.view.webview.html = this.sqlResultsToHtml(sqlResults);
+        console.log(this.sqlResultsToHtml(sqlResults));
         this.view.reveal();
     }
 
     sqlResultsToHtml({columnNames, rows}) {
+        const datatablesJsUri = this.mediaPath('datatables.min.js');
+        const datatablesCssUri = this.mediaPath('datatables.min.css');
+        const mainJsUri = this.mediaPath('main.js');
+        const mainCssUri = this.mediaPath('main.css');
+        const nonce = this.nonce();
+
         const headerCells = columnNames.map(column => `<th>${column}</th>`);
         const bodyCells = rows.map(row => row.map(cell => `<td>${cell}</td>`)).join('\n');
 
@@ -21,23 +32,15 @@ class SqlResultsViewer {
             <html>
                 <head>
                     <title>SqlRunner</title>
-                    <style>
-                        th {
-                            background-color: silver;
-                        }
-
-                        th, td {
-                            border: 1px solid black;
-                        }
-
-                        td {
-                            padding-left: 20px;
-                            padding-right: 20px;
-                        }
-                    </style>
+                    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${this.view.webview.cspSource}; script-src 'nonce-${nonce}';">
+                    <link href="${datatablesCssUri}" rel="stylesheet" />
+                    <link href="${mainCssUri}" rel="stylesheet" />
+                    <script nonce="${nonce}" src="${datatablesJsUri}"></script>
+                    <script nonce="${nonce}" src="${mainJsUri}"></script>
                 </head>
+
                 <body>
-                    <table>
+                    <table id="results-table" class="table table-striped">
                         <thead>
                             ${headerCells}
                         </thead>
@@ -50,6 +53,10 @@ class SqlResultsViewer {
         `
     }
 
+    mediaPath(file) {
+        return this.view.webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'media', file));
+    }
+
     createWebView(onDispose) {
         const view = vscode.window.createWebviewPanel(
             VIEW_TYPE,
@@ -57,9 +64,25 @@ class SqlResultsViewer {
             vscode.ViewColumn.Beside
         );
 
+        view.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [this.extensionUri]
+        };
+
         view.onDidDispose(onDispose, null, []);
 
         return view;
+    }
+
+    nonce() {
+        let text = '';
+        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+        for (let i = 0; i < 32; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+
+        return text;
     }
 }
 

@@ -10,13 +10,16 @@ let state = {
     resultsViewer: null
 };
 
-async function extensionState() {
+/**
+ * @param {vscode.ExtensionContext} context 
+ */
+async function extensionState(context) {
     console.log('Retrieving/Creating extension state...');
 
-    if (!state.connection) await connectToDatabase();
+    if (!state.connection) await connectToDatabase(context);
 
     if (!state.resultsViewer) {
-        state.resultsViewer = new SqlResultsViewer({onDispose: destroyExtensionState});
+        state.resultsViewer = new SqlResultsViewer(context.extensionUri, {onDispose: destroyExtensionState});
     }
 
     return state;
@@ -32,7 +35,7 @@ function destroyExtensionState() {
 /**
  * Attempt to make a database connection.
  */
-async function connectToDatabase() {
+async function connectToDatabase(_context) {
     if (state.connection) {
         console.log(`Disconnecting database ${state.connection.getName()}...`)
         state.connection.close();
@@ -58,9 +61,11 @@ async function connectToDatabase() {
 
 /**
  * Fetches currently selected query in editor and executes it.
+ * 
+ * @param {vscode.ExtensionContext} context
  */
-async function runQuery() {
-    const state = await extensionState();
+async function runQuery(context) {
+    const state = await extensionState(context);
     console.log(`Extension state is ${state}`);
 
     if (!state) return;

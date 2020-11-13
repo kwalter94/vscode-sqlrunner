@@ -5,7 +5,7 @@ const vscode = require('vscode');
 const commands = require('./sqlrunner/vscode/commands');
 
 function addCommand(context, name, command) {
-    context.subscriptions.push(vscode.commands.registerCommand(name, command));
+    context.subscriptions.push(vscode.commands.registerCommand(name, () => command(context)));
 }
 
 /**
