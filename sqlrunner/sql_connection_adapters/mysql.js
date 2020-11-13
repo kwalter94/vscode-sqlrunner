@@ -6,28 +6,34 @@ function unpackObject(object, properties) {
 
 class MySqlConnectionAdapter {
     constructor(user, password, host, port, database) {
-        this.connection = mysql.createConnection({host, port, user, password, database})
-        this.connection.connect();
+        this.connectionPool = mysql.createPool({host, port, user, password, database})
     }
 
     async runQuery(query) {
         return new Promise((resolve, reject) => {
-            this.connection.query(query, (error, results, fields) => {
-                if (error) {
+            this.connectionPool.getConnection((error, connection) => {
+                const handleError = (error) => {
+                    connection.release();
                     reject(error);
-                    return;
                 }
 
-                const columnNames = fields.map(field => field.name);
-                const rows = results.map(result => unpackObject(result, columnNames));
-                
-                resolve({columnNames, rows});
-            });
+                if (error) return handleError(error);
+
+                connection.query(query, (error, results, fields) => {
+                    if (error) return handleError(error);
+
+                    const columnNames = fields.map(field => field.name);
+                    const rows = results.map(result => unpackObject(result, columnNames));
+                    
+                    resolve({columnNames, rows});
+                });
+            })
+            
         });
     }
 
     close() {
-        this.connection.destroy();
+        this.connectionPool.end();
     }
 }
 
