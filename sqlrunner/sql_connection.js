@@ -49,7 +49,7 @@ class SqlConnection {
         const SqlConnectionAdapter = require(`./sql_connection_adapters/${dbms}`);
         const adapter = new SqlConnectionAdapter(username, password, host, port, database);
 
-        return new this(dbms, `${host}:${port || 'default'}`, adapter);
+        return new this(dbms, `${host}:${port || 'default'}/${database}`, adapter);
     }
 
     constructor(dbms, host, adapter) {
@@ -74,7 +74,7 @@ class SqlConnection {
     }
 
     getName() {
-        return `${this.dbms}: ${this.host} - ${this.database}`
+        return `${this.dbms}: ${this.host}`;
     }
 
     static _parseConnectionString(connectionString) {

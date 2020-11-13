@@ -10,14 +10,19 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:sqlrunner.runQuery"
+		"onCommand:sqlrunner.runQuery",
+		"onCommand:sqlrunner.connectToDatabase"
 	],
 	"main": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
 				"command": "sqlrunner.runQuery",
-				"title": "Run SQL"
+				"title": "SQL Runner: Run SQL"
+			},
+			{
+				"command": "sqlrunner.connectToDatabase",
+				"title": "SQL Runner: Connect to database"
 			}
 		],
 		"keybindings": [

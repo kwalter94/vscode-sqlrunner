@@ -4,15 +4,17 @@ const vscode = require('vscode');
 
 const commands = require('./sqlrunner/vscode/commands');
 
+function addCommand(context, name, command) {
+    context.subscriptions.push(vscode.commands.registerCommand(name, command));
+}
+
 /**
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
     console.log('SQL Runner activated!!!');
-
-    context.subscriptions.push(
-        vscode.commands.registerCommand('sqlrunner.runQuery', commands.runQuery)
-    )
+    addCommand(context, 'sqlrunner.runQuery', commands.runQuery);
+    addCommand(context, 'sqlrunner.connectToDatabase', commands.connectToDatabase);
 }
 
 exports.activate = activate;

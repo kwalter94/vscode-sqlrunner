@@ -11,37 +11,50 @@ let state = {
 };
 
 async function extensionState() {
-    try {
-        console.log('Retrieving extension state...');
+    console.log('Retrieving/Creating extension state...');
 
-        if (!state.connection) {
-            const connectionString = await getDatabaseConnectionString();
-            if (!connectionString) {
-                vscode.window.showInformationMessage('SQL Runner cancelled...');
-                return null;
-            }
+    if (!state.connection) await connectToDatabase();
 
-            state.connection = SqlConnection.fromConnectionString(connectionString);
-        }
-
-        if (!state.resultsViewer) {
-            state.resultsViewer = new SqlResultsViewer(
-                {
-                    onDispose: () => {
-                        state.connection?.close();
-                        state.connection = null;
-                        state.resultsViewer = null;
-                    }
-                }
-            );
-        }
-
-        return state;
-    } catch (error) {
-        vscode.window.showErrorMessage(`Failed to establish database connection: ${error}`)
+    if (!state.resultsViewer) {
+        state.resultsViewer = new SqlResultsViewer({onDispose: destroyExtensionState});
     }
+
+    return state;
 }
 
+function destroyExtensionState() {
+    console.log('Destroying extension state');
+    state.connection?.close();
+    state.connection = null;
+    state.resultsViewer = null;
+}
+
+/**
+ * Attempt to make a database connection.
+ */
+async function connectToDatabase() {
+    if (state.connection) {
+        console.log(`Disconnecting database ${state.connection.getName()}...`)
+        state.connection.close();
+        state.connection = null;
+    }
+
+    const connectionString = await getDatabaseConnectionString();
+
+    if (!connectionString) {
+        vscode.window.showInformationMessage('SQL Runner cancelled...');
+        return null;
+    }
+
+    try {
+        console.log(`Connecting to database: ${connectionString}`);
+        state.connection = SqlConnection.fromConnectionString(connectionString);
+        vscode.window.showInformationMessage(`Connected to database: ${state.connection.getName()}`);
+    } catch (e) {
+        console.error(e);
+        vscode.window.showErrorMessage(`Failed to establish database connection: ${e}`)
+    }
+}
 
 /**
  * Fetches currently selected query in editor and executes it.
@@ -67,4 +80,4 @@ async function runQuery() {
     }
 }
 
-module.exports = {runQuery};
+module.exports = {connectToDatabase, runQuery};
