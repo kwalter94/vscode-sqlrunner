@@ -26,6 +26,7 @@ class MySqlConnectionAdapter {
                     const rows = results.map(result => unpackObject(result, columnNames));
                     
                     resolve({columnNames, rows});
+                    connection.release();
                 });
             })
             
