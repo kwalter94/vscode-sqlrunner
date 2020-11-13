@@ -13,7 +13,6 @@ class SqlResultsViewer {
 
     renderSqlResults(sqlResults) {
         this.view.webview.html = this.sqlResultsToHtml(sqlResults);
-        console.log(this.sqlResultsToHtml(sqlResults));
         this.view.reveal();
     }
 

@@ -3,7 +3,7 @@
 //        out how to deal with @ in any part of the connection string
 //        since that character has has a special meaning in the
 //        connection string.
-const CONNECTION_STRING_REGEX = /(?<dbms>\w+):\/\/((?<username>\w+[a-z0-9]*):(?<password>.+)@)?(?<host>[a-z0-9-.~]+)(\:(?<port>\d+))?\/(?<database>\w+[a-z0-9]*)/img;
+const CONNECTION_STRING_REGEX = /(?<dbms>\w+):\/\/((?<username>\w+[a-z0-9]*):(?<password>.+)@)?(?<host>[a-z0-9-.~]+)(\:(?<port>\d+))?\/(?<database>\w+[a-z0-9]*)/im;
 
 class SqlConnection {
     /**
