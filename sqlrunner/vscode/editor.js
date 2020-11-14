@@ -39,7 +39,13 @@ async function getSelectedText(editor) {
 }
 
 async function getDatabaseConnectionString() {
-    return vscode.window.showInputBox({placeHolder: 'dbms://username:password@host:port/database'});
+    return vscode.window.showInputBox(
+        {
+            placeHolder: 'dbms://username:password@host:port/database',
+            ignoreFocusOut: true,
+            prompt: 'Connection string'
+        }
+    );
 }
 
 async function getQuery() {
