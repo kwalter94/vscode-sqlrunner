@@ -23,8 +23,10 @@ class SqlResultsViewer {
         const mainCssUri = this.mediaPath('main.css');
         const nonce = this.nonce();
 
-        const headerCells = columnNames.map(column => `<th>${column}</th>`);
-        const bodyCells = rows.map(row => row.map(cell => `<td>${cell}</td>`)).join('\n');
+        const headerCells = columnNames.map(column => `<th>${column}</th>`).join('\n');
+        const bodyCells = rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('\n')}</tr>`).join('\n');
+        
+        console.log(bodyCells);
 
         return `
             <!DOCTYPE html>
