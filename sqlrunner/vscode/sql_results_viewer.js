@@ -12,6 +12,7 @@ class SqlResultsViewer {
     }
 
     renderSqlResults(sqlResults) {
+        console.log('Rendering SQL results');
         this.view.webview.html = this.sqlResultsToHtml(sqlResults);
         this.view.reveal();
     }
@@ -26,8 +27,6 @@ class SqlResultsViewer {
         const headerCells = columnNames.map(column => `<th>${column}</th>`).join('\n');
         const bodyCells = rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('\n')}</tr>`).join('\n');
         
-        console.log(bodyCells);
-
         return `
             <!DOCTYPE html>
             <html>

@@ -11,7 +11,8 @@ class MySqlConnectionAdapter {
         return new Promise((resolve, reject) => {
             this.connectionPool.getConnection((error, connection) => {
                 const handleError = (error) => {
-                    connection.release();
+                    console.error(`MySQL error: ${error}`)
+                    connection?.release();
                     reject(error);
                 }
 
