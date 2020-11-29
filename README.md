@@ -4,26 +4,28 @@ Run SQL queries directly from VS Code.
 
 ## Features
 
-TODO
+- Querying on MySQL/MariaDB databases
+- Querying on Postgres databases
 
 ## Requirements
 
 TODO
 
-## Extension Settings
+## Installation
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+Grab a release from the [releases](https://github.com/kwalter94/sqlrunner/releases)
+page and install it as follows:
 
-For example:
 
-This extension contributes the following settings:
+```bash
 
-* `myExtension.enable`: enable/disable this extension
-* `myExtension.thing`: set to `blah` to do something
+    code --install-extension sqlrunner-x.x.x.vsix
+
+```
 
 ## Known Issues
 
-TODO
+- URLs with formats different from `dbms://username:password@host:port/database` are not supported.
 
 ## Release Notes
 
