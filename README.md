@@ -13,7 +13,7 @@ TODO
 
 ## Installation
 
-Grab a release from the [releases](https://github.com/kwalter94/sqlrunner/releases)
+Grab a release from the [releases](https://github.com/kwalter94/vscode-sqlrunner/releases)
 page and install it as follows:
 
 
