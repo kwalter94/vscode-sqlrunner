@@ -2,8 +2,8 @@
 	"name": "sqlrunner",
 	"displayName": "SqlRunner",
 	"description": "Run some SQL in MySQL client.",
-    "publisher": "kwalter94",
-    "repository": "https://github.com/kwalter94/sqlrunner",
+	"publisher": "kwalter94",
+	"repository": "https://github.com/kwalter94/sqlrunner",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.50.0"
@@ -52,6 +52,7 @@
 		"vscode-test": "^1.4.0"
 	},
 	"dependencies": {
+		"handlebars": "^4.7.6",
 		"mysql": "^2.18.1",
 		"pg": "^8.5.0"
 	}

@@ -1,3 +1,5 @@
+const fs = require('fs');
+const handlebars = require('handlebars');
 const vscode = require('vscode');
 
 const VIEW_TYPE = 'SqlResultsViewer';
@@ -9,6 +11,7 @@ class SqlResultsViewer {
     constructor(extensionUri, {onDispose}) {
         this.extensionUri = extensionUri;
         this.view = this.createWebView(onDispose);
+        this.initHandlebars();
     }
 
     renderSqlResults(sqlResults) {
@@ -17,44 +20,32 @@ class SqlResultsViewer {
         this.view.reveal();
     }
 
+    /**
+     * Renders html from given columnNames and rows
+     * 
+     * @returns {string}
+     */
     sqlResultsToHtml({columnNames, rows}) {
-        const datatablesJsUri = this.mediaPath('datatables.min.js');
-        const datatablesCssUri = this.mediaPath('datatables.min.css');
-        const mainJsUri = this.mediaPath('main.js');
-        const mainCssUri = this.mediaPath('main.css');
-        const nonce = this.nonce();
+        try {
+            console.log(this.mediaPath('index.hbs').fsPath);
+            console.log(this.mediaPath('index.hbs').path);
+            const templateData = fs.readFileSync(this.mediaPath('index.hbs').fsPath);
+            const template = handlebars.compile(templateData.toString());
 
-        const headerCells = columnNames.map(column => `<th>${column}</th>`).join('\n');
-        const bodyCells = rows.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('\n')}</tr>`).join('\n');
-        
-        return `
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>SqlRunner</title>
-                    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${this.view.webview.cspSource}; script-src 'nonce-${nonce}';">
-                    <link href="${datatablesCssUri}" rel="stylesheet" />
-                    <link href="${mainCssUri}" rel="stylesheet" />
-                    <script nonce="${nonce}" src="${datatablesJsUri}"></script>
-                    <script nonce="${nonce}" src="${mainJsUri}"></script>
-                </head>
-
-                <body>
-                    <table id="results-table" class="table table-striped">
-                        <thead>
-                            ${headerCells}
-                        </thead>
-                        <tbody>
-                            ${bodyCells}
-                        </tbody>
-                    </table>
-                </body>
-            </html>
-        `
+            const html =  template({'column_names': columnNames, rows});
+            console.log(html);
+            return html;
+        } catch (error) {
+            throw new Error(`Failed to compile index.hbs: ${error.message}`)
+        }
     }
 
     mediaPath(file) {
-        return this.view.webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, 'media', file));
+        return vscode.Uri.joinPath(this.extensionUri, 'media', file);
+    }
+
+    mediaUri(file) {
+        return this.view.webview.asWebviewUri(this.mediaPath(file));
     }
 
     createWebView(onDispose) {
@@ -83,6 +74,15 @@ class SqlResultsViewer {
         }
 
         return text;
+    }
+
+    initHandlebars() {
+        const context = this;
+        const nonce = this.nonce();
+
+        handlebars.registerHelper('media_uri', function(file) { return context.mediaUri(file) });
+        handlebars.registerHelper('nonce', function() { return nonce });
+        handlebars.registerHelper('csp_source', function() { return context.view.webview.cspSource });
     }
 }
 
