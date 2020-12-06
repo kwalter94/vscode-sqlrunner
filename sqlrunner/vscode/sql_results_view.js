@@ -2,9 +2,9 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 const vscode = require('vscode');
 
-const VIEW_TYPE = 'SqlResultsViewer';
+const VIEW_TYPE = 'SqlResultsView';
 
-class SqlResultsViewer {
+class SqlResultsView {
     /**
      * @param {vscode.Uri} extensionUri 
      */
@@ -100,4 +100,4 @@ class SqlResultsViewer {
     }
 }
 
-module.exports = SqlResultsViewer;
+module.exports = SqlResultsView;

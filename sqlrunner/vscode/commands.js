@@ -1,13 +1,13 @@
 const vscode = require('vscode');
 
 const SqlConnection = require('../sql_connection');
-const SqlResultsViewer = require('./sql_results_viewer');
+const SqlResultsView = require('./sql_results_view');
 const {getDatabaseConnectionString, getQuery} = require('./editor');
 const {timeIt} = require('../utils');
 
 let state = {
     connection: null,
-    resultsViewer: null
+    resultsView: null
 };
 
 /**
@@ -18,8 +18,8 @@ async function extensionState(context) {
 
     if (!state.connection) await connectToDatabase(context);
 
-    if (!state.resultsViewer) {
-        state.resultsViewer = new SqlResultsViewer(context.extensionUri, {onDispose: destroyExtensionState});
+    if (!state.resultsView) {
+        state.resultsView = new SqlResultsView(context.extensionUri, {onDispose: destroyExtensionState});
     }
 
     return state;
@@ -29,7 +29,7 @@ function destroyExtensionState() {
     console.log('Destroying extension state');
     state.connection?.close();
     state.connection = null;
-    state.resultsViewer = null;
+    state.resultsView = null;
 }
 
 /**
@@ -74,11 +74,11 @@ async function runQuery(context) {
     }
 
     try {
-        state.resultsViewer.showLoader();
+        state.resultsView.showLoader();
         const [executionTime, results] = await timeIt(() => state.connection.runQuery(query));
-        state.resultsViewer.showResults({...results, time: executionTime});
+        state.resultsView.showResults({...results, time: executionTime});
     } catch (e) {
-        state.resultsViewer.showError(`Query failed: ${e}`);
+        state.resultsView.showError(`Query failed: ${e}`);
     }
 }
 
