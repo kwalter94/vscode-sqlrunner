@@ -1,6 +1,6 @@
-const fs = require('fs');
-const handlebars = require('handlebars');
 const vscode = require('vscode');
+
+const HbsTemplateRenderer = require('./hbs_template_renderer');
 
 const VIEW_TYPE = 'SqlResultsView';
 
@@ -11,55 +11,25 @@ class SqlResultsView {
     constructor(extensionUri, {onDispose}) {
         this.extensionUri = extensionUri;
         this.view = this.createWebView(onDispose);
-        this.initHandlebars();
+        this.templateRenderer = new HbsTemplateRenderer(extensionUri, this.view.webview);
     }
 
-    showResults(sqlResults) {
+    showResults({columnNames, rows, time}) {
         console.log('Rendering SQL results');
-        this.view.webview.html = this.sqlResultsToHtml(sqlResults);
-        this.view.reveal();
+        this.renderTemplate('index.hbs', {time, rows, 'column_names': columnNames});
     }
 
     showError(message) {
-        this.view.webview.html = this.renderTemplate('error.hbs', {message});
+        this.renderTemplate('error.hbs', {message});
     }
 
     showLoader(loading=true) {
-        this.view.webview.html = this.renderTemplate('loading.hbs', {loading})
+        this.renderTemplate('loading.hbs', {loading})
     }
 
-    /**
-     * Renders html from given columnNames and rows
-     * 
-     * @returns {string}
-     */
-    sqlResultsToHtml({columnNames, rows, time}) {
-        return this.renderTemplate('index.hbs', {time, rows, 'column_names': columnNames});
-    }
-
-    /**
-     * Renders an hbs template and returns a string.
-     * 
-     * @param template {string}
-     * @param context {Object}
-     */
     renderTemplate(template, context) {
-        try {
-            const templateData = fs.readFileSync(this.mediaPath(template).fsPath);
-            const render = handlebars.compile(templateData.toString());
-
-            return render(context);
-        } catch (error) {
-            throw new Error(`Failed to compile index.hbs: ${error.message}`)
-        }
-    }
-
-    mediaPath(file) {
-        return vscode.Uri.joinPath(this.extensionUri, 'media', file);
-    }
-
-    mediaUri(file) {
-        return this.view.webview.asWebviewUri(this.mediaPath(file));
+        this.view.webview.html = this.templateRenderer.render(template, context);
+        this.view.reveal();
     }
 
     createWebView(onDispose) {
@@ -77,26 +47,6 @@ class SqlResultsView {
         view.onDidDispose(onDispose, null, []);
 
         return view;
-    }
-
-    nonce() {
-        let text = '';
-        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-
-        for (let i = 0; i < 32; i++) {
-            text += possible.charAt(Math.floor(Math.random() * possible.length));
-        }
-
-        return text;
-    }
-
-    initHandlebars() {
-        const context = this;
-        const nonce = this.nonce();
-
-        handlebars.registerHelper('media_uri', function(file) { return context.mediaUri(file) });
-        handlebars.registerHelper('nonce', function() { return nonce });
-        handlebars.registerHelper('csp_source', function() { return context.view.webview.cspSource });
     }
 }
 
