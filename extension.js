@@ -3,9 +3,19 @@
 const vscode = require('vscode');
 
 const commands = require('./sqlrunner/vscode/commands');
+const TablesPanel = require('./sqlrunner/vscode/tables_panel');
 
 function addCommand(context, name, command) {
     context.subscriptions.push(vscode.commands.registerCommand(name, () => command(context)));
+}
+
+/**
+ * @param {vscode.ExtensionContext} context 
+ * @param {string} viewType 
+ * @param {vscode.WebviewViewProvider} viewProvider 
+ */
+function addWebviewProvider(context, viewType, viewProvider) {
+    context.subscriptions.push(vscode.window.registerWebviewViewProvider(viewType, viewProvider));
 }
 
 /**
@@ -13,6 +23,11 @@ function addCommand(context, name, command) {
  */
 function activate(context) {
     console.log('SQL Runner activated!!!');
+
+    const [viewType, provider] = commands.initTablesPanel(context);
+
+    addWebviewProvider(context, viewType, provider);
+
     addCommand(context, 'sqlrunner.runQuery', commands.runQuery);
     addCommand(context, 'sqlrunner.connectToDatabase', commands.connectToDatabase);
 }

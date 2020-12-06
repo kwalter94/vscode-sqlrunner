@@ -2,13 +2,28 @@ const vscode = require('vscode');
 
 const SqlConnection = require('../sql_connection');
 const SqlResultsView = require('./sql_results_view');
+const TablesPanel = require('./tables_panel');
 const {getDatabaseConnectionString, getQuery} = require('./editor');
 const {timeIt} = require('../utils');
 
 let state = {
     connection: null,
-    resultsView: null
+    resultsView: null,
+    tablesPanel: null,
 };
+
+/**
+ * @param {vscode.ExtensionContext} context
+ * 
+ * @returns {[string, TablesPanel.TablesPanel]}
+ */
+function initTablesPanel(context) {
+    // TODO: Have to figure out where to place this function.
+    //       Seems out of place being within the commands module.
+    state.tablesPanel = new TablesPanel.TablesPanel(context.extensionUri);
+
+    return [TablesPanel.VIEW_ID, this.tablesPanel];
+}
 
 /**
  * @param {vscode.ExtensionContext} context 
@@ -22,6 +37,8 @@ async function extensionState(context) {
         state.resultsView = new SqlResultsView(context.extensionUri, {onDispose: destroyExtensionState});
     }
 
+    state.tablesPanel?.showTables([]);
+
     return state;
 }
 
@@ -30,6 +47,8 @@ function destroyExtensionState() {
     state.connection?.close();
     state.connection = null;
     state.resultsView = null;
+    state.tablesPanel.dispose();
+    state.tablesPanel = null;
 }
 
 /**
@@ -82,4 +101,4 @@ async function runQuery(context) {
     }
 }
 
-module.exports = {connectToDatabase, runQuery};
+module.exports = {connectToDatabase, initTablesPanel, runQuery};

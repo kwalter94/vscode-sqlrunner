@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SqlRunner</title>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src {{csp_source}}; script-src 'nonce-{{nonce}}';">
+        <link href="{{media_uri 'datatables.min.css'}}" rel="stylesheet" />
+        <link href="{{media_uri 'main.css'}}" rel="stylesheet" />
+
+        <script nonce="{{nonce}}" src="{{media_uri 'datatables.min.js'}}"></script>
+    </head>
+
+    <body>
+        <div content="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <ul class="list">
+                        <li>Table 1</li>
+                        <li>Table 2</li>
+                        <li>Table 3</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <script nonce="{{nonce}}">$('#results-table').DataTable({processing: true})</script>
+    </body>
+</html>
