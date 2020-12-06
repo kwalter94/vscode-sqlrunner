@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>SqlRunner | Running Query</title>
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src {{csp_source}}; script-src 'nonce-{{nonce}}';">
+        <link href="{{media_uri 'datatables.min.css'}}" rel="stylesheet" />
+        <script nonce="{{nonce}}" src="{{media_uri 'datatables.min.js'}}"></script>
+    </head>
+
+    <body>
+        <div content="container">
+            <h2>Running query...</h2>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only">Waiting for Query results...</span>
+                </div>
+            </div>
+        </div>
+
+        <script nonce="{{nonce}}">$('#results-table').DataTable({processing: true})</script>
+    </body>
+</html>

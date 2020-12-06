@@ -10,20 +10,32 @@
     </head>
 
     <body>
-        <table id="results-table" class="table table-striped">
-            <thead>
-                {{#each column_names}}
-                    <th>{{this}}</th>
-                {{/each}}
-            </thead>
-            <tbody>
-                {{#each rows as | row |}}
-                    {{#each row as | column |}}
-                        <td>{{column}}</td>
-                    {{/each}}
-                {{/each}}
-            </tbody>
-        </table>
+        <div content="container">
+            {{#if time }}
+                <div class="alert alert-success" role="alert">
+                    Query executed in approximately {{time}} seconds
+                </div>
+            {{/if}}
+
+            <div class="row">
+                <div class="col-md-12">
+                    <table id="results-table" class="table table-striped">
+                        <thead>
+                            {{#each column_names}}
+                                <th>{{this}}</th>
+                            {{/each}}
+                        </thead>
+                        <tbody>
+                            {{#each rows as | row |}}
+                                {{#each row as | column |}}
+                                    <td>{{column}}</td>
+                                {{/each}}
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
 
         <script nonce="{{nonce}}">$('#results-table').DataTable({processing: true})</script>
     </body>

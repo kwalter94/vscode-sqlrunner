@@ -14,10 +14,18 @@ class SqlResultsViewer {
         this.initHandlebars();
     }
 
-    renderSqlResults(sqlResults) {
+    showResults(sqlResults) {
         console.log('Rendering SQL results');
         this.view.webview.html = this.sqlResultsToHtml(sqlResults);
         this.view.reveal();
+    }
+
+    showError(message) {
+        this.view.webview.html = this.renderTemplate('error.hbs', {message});
+    }
+
+    showLoader(loading=true) {
+        this.view.webview.html = this.renderTemplate('loading.hbs', {loading})
     }
 
     /**
@@ -25,16 +33,22 @@ class SqlResultsViewer {
      * 
      * @returns {string}
      */
-    sqlResultsToHtml({columnNames, rows}) {
-        try {
-            console.log(this.mediaPath('index.hbs').fsPath);
-            console.log(this.mediaPath('index.hbs').path);
-            const templateData = fs.readFileSync(this.mediaPath('index.hbs').fsPath);
-            const template = handlebars.compile(templateData.toString());
+    sqlResultsToHtml({columnNames, rows, time}) {
+        return this.renderTemplate('index.hbs', {time, rows, 'column_names': columnNames});
+    }
 
-            const html =  template({'column_names': columnNames, rows});
-            console.log(html);
-            return html;
+    /**
+     * Renders an hbs template and returns a string.
+     * 
+     * @param template {string}
+     * @param context {Object}
+     */
+    renderTemplate(template, context) {
+        try {
+            const templateData = fs.readFileSync(this.mediaPath(template).fsPath);
+            const render = handlebars.compile(templateData.toString());
+
+            return render(context);
         } catch (error) {
             throw new Error(`Failed to compile index.hbs: ${error.message}`)
         }

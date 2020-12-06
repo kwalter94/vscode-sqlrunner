@@ -6,6 +6,11 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ## [Unreleased]
 
+### Added
+
+- Basic loader to indicate that a query is executing
+- An error page to display errors in query execution
+
 ## [0.0.1] - 2020-12-29
 
 ### Added

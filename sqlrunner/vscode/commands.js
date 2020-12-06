@@ -66,22 +66,19 @@ async function connectToDatabase(_context) {
  */
 async function runQuery(context) {
     const state = await extensionState(context);
-    console.log(`Extension state is ${state}`);
-
-    if (!state) return;
-
     const query = await getQuery();
 
-    if (query) {
-        try {
-            const [executionTime, results] = await timeIt(() => state.connection.runQuery(query));
-            state.resultsViewer.renderSqlResults(results);
-            vscode.window.showInformationMessage(`Query executed in approximately ${executionTime} seconds`);
-        } catch (e) {
-            vscode.window.showErrorMessage(`Query failed: ${e}`);
-        }
-    } else {
+    if (!query) {
         vscode.window.showErrorMessage("No query selected!");
+        return;
+    }
+
+    try {
+        state.resultsViewer.showLoader();
+        const [executionTime, results] = await timeIt(() => state.connection.runQuery(query));
+        state.resultsViewer.showResults({...results, time: executionTime});
+    } catch (e) {
+        state.resultsViewer.showError(`Query failed: ${e}`);
     }
 }
 
