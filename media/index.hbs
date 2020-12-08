@@ -27,9 +27,11 @@
                         </thead>
                         <tbody>
                             {{#each rows as | row |}}
-                                {{#each row as | column |}}
-                                    <td>{{column}}</td>
-                                {{/each}}
+                                <tr>
+                                    {{#each row as | column |}}
+                                        <td>{{column}}</td>
+                                    {{/each}}
+                                </tr>
                             {{/each}}
                         </tbody>
                     </table>
