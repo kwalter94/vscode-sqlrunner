@@ -22,7 +22,7 @@ function initTablesPanel(context) {
     //       Seems out of place being within the commands module.
     state.tablesPanel = new TablesPanel.TablesPanel(context.extensionUri);
 
-    return [TablesPanel.VIEW_ID, this.tablesPanel];
+    return [TablesPanel.VIEW_ID, state.tablesPanel];
 }
 
 /**
