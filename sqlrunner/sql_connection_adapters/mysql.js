@@ -32,6 +32,16 @@ class MySqlConnectionAdapter {
         });
     }
 
+    async getTables() {
+        const {rows} = await this.runQuery('SHOW TABLES');
+
+        return rows.map(([table]) => table);
+    }
+
+    async describeTable(table) {
+        return this.runQuery(`DESCRIBE ${table}`);
+    }
+
     close() {
         this.connectionPool.end();
     }

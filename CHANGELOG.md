@@ -8,6 +8,8 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ### Added
 
+- Describe tables (MySQL)
+- Listing of all tables in database (MySQL)
 - Basic loader to indicate that a query is executing
 - An error page to display errors in query execution
 

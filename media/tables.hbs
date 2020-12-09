@@ -6,18 +6,22 @@
     </head>
 
     <body>
-        <div content="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <ul class="list">
-                        <li>Table 1</li>
-                        <li>Table 2</li>
-                        <li>Table 3</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <ul class="list">
+            {{#each tables }}
+                <li><a href="#" class="describe-table" data-table="{{this}}">{{this}}</a></li>
+            {{/each}}
+        </ul>
 
-        <script nonce="{{nonce}}">$('#results-table').DataTable({processing: true})</script>
+        <script nonce="{{nonce}}">
+            const vscode = acquireVsCodeApi();
+
+            document.querySelectorAll('a.describe-table')
+                    .forEach(node => {
+                        node.addEventListener('click', event => {
+                            const message = {type: 'describe', table: node.getAttribute('data-table')};
+                            vscode.postMessage(message);
+                        });
+                    });
+        </script>
     </body>
 </html>

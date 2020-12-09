@@ -20,7 +20,12 @@ let state = {
 function initTablesPanel(context) {
     // TODO: Have to figure out where to place this function.
     //       Seems out of place being within the commands module.
-    state.tablesPanel = new TablesPanel.TablesPanel(context.extensionUri);
+    const onTableClicked = async event => {
+        const results = await state.connection?.describeTable(event.table);
+        state.resultsView?.showResults(results);
+    };
+
+    state.tablesPanel = new TablesPanel.TablesPanel(context.extensionUri, {onTableClicked});
 
     return [TablesPanel.VIEW_ID, state.tablesPanel];
 }
@@ -37,7 +42,10 @@ async function extensionState(context) {
         state.resultsView = new SqlResultsView(context.extensionUri, {onDispose: destroyExtensionState});
     }
 
-    state.tablesPanel?.showTables([]);
+    if (state.tablesPanel) {
+        const tables = await state.connection.getTables();
+        state.tablesPanel.showTables(tables);
+    }
 
     return state;
 }

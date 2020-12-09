@@ -5,6 +5,12 @@
 //        connection string.
 const CONNECTION_STRING_REGEX = /(?<dbms>\w+):\/\/((?<username>\w+[a-z0-9]*):(?<password>.+)@)?(?<host>[a-z0-9-.~]+)(\:(?<port>\d+))?\/(?<database>\w+[a-z0-9]*)/im;
 
+function tryMethod(object, method, ...args) {
+    if (!object[method]) return undefined;
+
+    return object[method](...args);
+}
+
 class SqlConnection {
     /**
      * Create a connection to a database using a connection string.
@@ -75,6 +81,14 @@ class SqlConnection {
 
     getName() {
         return `${this.dbms}: ${this.host}`;
+    }
+
+    async getTables() {
+        return tryMethod(this.adapter, 'getTables') || [];
+    }
+
+    async describeTable(table) {
+        return tryMethod(this.adapter, 'describeTable', table) || {columnNames: [], rows: []};
     }
 
     static _parseConnectionString(connectionString) {

@@ -13,10 +13,11 @@ class TablesPanel {
     /**
      * @param {vscode.Uri} extensionUri 
      */
-    constructor(extensionUri) {
+    constructor(extensionUri, {onTableClicked}) {
         this.extensionUri = extensionUri;
         this.panel = null;
         this.templateRenderer = null;
+        this.onTableClicked = onTableClicked;
     }
 
     /**
@@ -29,6 +30,8 @@ class TablesPanel {
         this.panel = webviewView;
         this.templateRenderer = new HbsTemplateRenderer(this.extensionUri, this.panel.webview);
 
+        this.panel.webview.onDidReceiveMessage(this.onTableClicked);
+
         this.panel.webview.options = {
             enableScripts: true,
             localResourceRoots: [this.extensionUri]
@@ -36,6 +39,7 @@ class TablesPanel {
     }
 
     showTables(tables) {
+        console.log(tables);
         this.renderTemplate('tables.hbs', {tables});
     }
 
