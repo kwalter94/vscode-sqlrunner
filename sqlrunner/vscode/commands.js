@@ -112,4 +112,4 @@ async function loadTables() {
     state.tablesPanel.showTables(tables);
 }
 
-module.exports = {connectToDatabase, initTablesPanel, runQuery};
+module.exports = {connectToDatabase, loadTables, initTablesPanel, runQuery};

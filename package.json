@@ -7,7 +7,7 @@
 		"type": "git",
 		"url": "https://github.com/kwalter94/vscode-sqlrunner"
 	},
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"engines": {
 		"vscode": "^1.50.0"
 	},
@@ -28,6 +28,10 @@
 			{
 				"command": "sqlrunner.connectToDatabase",
 				"title": "SQL Runner: Connect to database"
+			},
+			{
+				"command": "sqlrunner.refreshTables",
+				"title": "SQL Runner: Refresh Tables"
 			}
 		],
 		"keybindings": [

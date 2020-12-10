@@ -4,6 +4,12 @@ SQLRunner version is versioned following [semver](https://semver.org). All new
 features and stuff go under `Added`, All fixes go under `Fixed`, deprecated
 and removed features go under `Deprecated` and `Removed` respectively.
 
+## [Unreleased]
+
+### Added
+
+- Added refresh tables command
+
 ## [0.0.2] - 2020-12-09
 
 ### Added

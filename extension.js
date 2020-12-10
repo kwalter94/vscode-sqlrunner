@@ -28,8 +28,9 @@ function activate(context) {
 
     addWebviewProvider(context, viewType, provider);
 
-    addCommand(context, 'sqlrunner.runQuery', commands.runQuery);
     addCommand(context, 'sqlrunner.connectToDatabase', commands.connectToDatabase);
+    addCommand(context, 'sqlrunner.refreshTables', commands.loadTables);
+    addCommand(context, 'sqlrunner.runQuery', commands.runQuery);
 }
 
 exports.activate = activate;
