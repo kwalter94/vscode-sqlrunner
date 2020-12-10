@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { registerDecorator } = require('handlebars');
 const handlebars = require('handlebars');
 const vscode = require('vscode');
 
