@@ -4,7 +4,7 @@ SQLRunner version is versioned following [semver](https://semver.org). All new
 features and stuff go under `Added`, All fixes go under `Fixed`, deprecated
 and removed features go under `Deprecated` and `Removed` respectively.
 
-## [Unreleased]
+## [0.0.2] - 2020-12-09
 
 ### Added
 
@@ -17,7 +17,7 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 - Run query keybinding to `alt-q e` from `shift-q e`
 
-## [0.0.1] - 2020-12-29
+## [0.0.1] - 2020-11-29
 
 ### Added
 
