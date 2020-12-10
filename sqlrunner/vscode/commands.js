@@ -21,8 +21,9 @@ function initTablesPanel(context) {
     // TODO: Have to figure out where to place this function.
     //       Seems out of place being within the commands module.
     const onTableClicked = async event => {
-        const results = await state.connection?.describeTable(event.table);
-        state.resultsView?.showResults(results);
+        const state = await extensionState(context);
+        const results = await state.connection.describeTable(event.table);
+        state.resultsView.showResults(results);
     };
 
     state.tablesPanel = new TablesPanel.TablesPanel(context.extensionUri, {onTableClicked});
