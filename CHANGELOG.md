@@ -8,6 +8,8 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ### Added
 
+- Listing of all tables (postgres)
+- Describe tables (postgres)
 - Added refresh tables command
 
 ## [0.0.2] - 2020-12-09
