@@ -42,11 +42,6 @@ async function extensionState(context) {
         state.resultsView = new SqlResultsView(context.extensionUri, {onDispose: destroyExtensionState});
     }
 
-    if (state.tablesPanel) {
-        const tables = await state.connection.getTables();
-        state.tablesPanel.showTables(tables);
-    }
-
     return state;
 }
 
@@ -79,6 +74,7 @@ async function connectToDatabase(_context) {
     try {
         console.log(`Connecting to database: ${connectionString}`);
         state.connection = SqlConnection.fromConnectionString(connectionString);
+        loadTables();
         vscode.window.showInformationMessage(`Connected to database: ${state.connection.getName()}`);
     } catch (e) {
         console.error(e);
@@ -107,6 +103,13 @@ async function runQuery(context) {
     } catch (e) {
         state.resultsView.showError(`Query failed: ${e}`);
     }
+}
+
+async function loadTables() {
+    if (!state.tablesPanel) return;
+
+    const tables = await state.connection.getTables();
+    state.tablesPanel.showTables(tables);
 }
 
 module.exports = {connectToDatabase, initTablesPanel, runQuery};
