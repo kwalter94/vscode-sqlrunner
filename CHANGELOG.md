@@ -6,6 +6,8 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ## [Unreleased]
 
+## [0.1.0] - 2020-12-11
+
 ### Added
 
 - Listing of all tables (postgres)
