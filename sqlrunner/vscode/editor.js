@@ -38,12 +38,13 @@ async function getSelectedText(editor) {
     return editor.document.getText(editor.selection);
 }
 
-async function getDatabaseConnectionString() {
+async function getDatabaseConnectionString(initialConnectionString = null) {
     return vscode.window.showInputBox(
         {
             placeHolder: 'dbms://username:password@host:port/database',
             ignoreFocusOut: true,
-            prompt: 'Connection string'
+            prompt: 'Connection string',
+            value: initialConnectionString
         }
     );
 }

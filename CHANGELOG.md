@@ -6,6 +6,10 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ## [Unreleased]
 
+### Fixed
+
+- Discarding of connection string on connect error
+
 ## [0.1.0] - 2020-12-11
 
 ### Added

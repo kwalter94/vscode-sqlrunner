@@ -58,14 +58,14 @@ function destroyExtensionState() {
 /**
  * Attempt to make a database connection.
  */
-async function connectToDatabase(_context) {
+async function connectToDatabase(context, rejectedConnectionString = null) {
     if (state.connection) {
         console.log(`Disconnecting database ${state.connection.getName()}...`)
         state.connection.close();
         state.connection = null;
     }
 
-    const connectionString = await getDatabaseConnectionString();
+    const connectionString = await getDatabaseConnectionString(rejectedConnectionString);
 
     if (!connectionString) {
         vscode.window.showInformationMessage('SQL Runner cancelled...');
@@ -75,11 +75,12 @@ async function connectToDatabase(_context) {
     try {
         console.log(`Connecting to database: ${connectionString}`);
         state.connection = SqlConnection.fromConnectionString(connectionString);
-        loadTables();
+        await loadTables();
         vscode.window.showInformationMessage(`Connected to database: ${state.connection.getName()}`);
     } catch (e) {
         console.error(e);
-        vscode.window.showErrorMessage(`Failed to establish database connection: ${e}`)
+        vscode.window.showErrorMessage(`Failed to establish database connection: ${e}`);
+        connectToDatabase(context, connectionString);
     }
 }
 
