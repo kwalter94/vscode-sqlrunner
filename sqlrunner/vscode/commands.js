@@ -111,7 +111,7 @@ async function loadTables() {
     if (!state.tablesPanel) return;
 
     const tables = await state.connection.getTables();
-    state.tablesPanel.showTables(tables);
+    state.tablesPanel.setTables(tables);
 }
 
 module.exports = {connectToDatabase, loadTables, initTablesPanel, runQuery};

@@ -8,6 +8,7 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ### Fixed
 
+- Tables not being rendered when connection is made whilst tables pane is closed
 - Discarding of connection string on connect error
 
 ## [0.1.0] - 2020-12-11

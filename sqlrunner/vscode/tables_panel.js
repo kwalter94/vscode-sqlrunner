@@ -36,11 +36,27 @@ class TablesPanel {
             enableScripts: true,
             localResourceRoots: [this.extensionUri]
         };
+        
+        this.panel.onDidChangeVisibility((_event) => {
+            if (!this.panel.visible) return;
+
+            this.showTables();
+        });
+        
+        this.showTables();
+    }
+    
+    setTables(tables) {
+        this.tables = tables;
+        
+        this.showTables();
     }
 
-    showTables(tables) {
-        console.log(tables);
-        this.renderTemplate('tables.hbs', {tables});
+    showTables() {
+        console.log(this.tables);
+        if (!this.tables) return;
+
+        this.renderTemplate('tables.hbs', {tables: this.tables});
     }
 
     renderTemplate(template, context) {
