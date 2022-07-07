@@ -18,7 +18,7 @@
 		"onCommand:sqlrunner.runQuery",
 		"onCommand:sqlrunner.connectToDatabase"
 	],
-	"main": "./extension.js",
+	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -52,20 +52,28 @@
 		}
 	},
 	"scripts": {
-		"lint": "eslint .",
+		"lint": "eslint --ext .tx,.tsx",
+		"vscode:prepublish": "yarn run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -w -p ./",
+		"test-compile": "tsc -p ./",
 		"pretest": "yarn run lint",
-		"test": "node ./test/runTest.js"
+		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.0.0",
+		"@types/mysql": "^2.15.21",
 		"@types/node": "^12.11.7",
+		"@types/pg": "^8.6.5",
 		"@types/vscode": "^1.50.0",
-		"eslint": "^7.9.0",
+		"@typescript-eslint/eslint-plugin": "^5.30.0",
+		"@typescript-eslint/parser": "^5.30.0",
+		"@vscode/test-electron": "^2.1.5",
+		"eslint": "^8.13.0",
 		"glob": "^7.1.6",
 		"mocha": "^8.1.3",
-		"typescript": "^4.0.2",
-		"vscode-test": "^1.4.0"
+		"typescript": "^4.7.2"
 	},
 	"dependencies": {
 		"handlebars": "^4.7.6",

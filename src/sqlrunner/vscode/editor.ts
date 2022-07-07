@@ -2,16 +2,12 @@
  * Helper functions for interacting with the Visual Studio Code editor.
  */
 
-const vscode = require('vscode');
+import * as vscode from 'vscode';
 
 /**
  * Check if the selection covers nothing
- * 
- * @param {vscode.Selection} param0 
- * 
- * @returns {boolean}
  */
-function isNothingSelected({start, end}) {
+function isNothingSelected({start, end}: vscode.Selection): boolean {
     return start.line === end.line && start.character === end.character;
 }
 
@@ -22,7 +18,7 @@ function isNothingSelected({start, end}) {
  * 
  * @returns {Promise<string>}
  */
-async function getSelectedText(editor) {
+async function getSelectedText(editor: vscode.TextEditor): Promise<string> {
     console.table(editor.selection);
 
     if (isNothingSelected(editor.selection)) {
@@ -38,18 +34,19 @@ async function getSelectedText(editor) {
     return editor.document.getText(editor.selection);
 }
 
-async function getDatabaseConnectionString(initialConnectionString = null) {
+export async function getDatabaseConnectionString(initialConnectionString: string | null = null): Promise<string | undefined> {
+    console.log(`window: ${vscode.window}`);
     return vscode.window.showInputBox(
         {
             placeHolder: 'dbms://username:password@host:port/database',
             ignoreFocusOut: true,
             prompt: 'Connection string',
-            value: initialConnectionString
+            value: initialConnectionString || ''
         }
     );
 }
 
-async function getQuery() {
+export async function getQuery(): Promise<string | null> {
     const editor = vscode.window.activeTextEditor;
 
     if (!editor) {
@@ -59,6 +56,3 @@ async function getQuery() {
 
     return getSelectedText(editor);
 }
-
-
-module.exports = {getDatabaseConnectionString, getQuery};

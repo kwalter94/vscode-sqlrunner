@@ -1,27 +1,20 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-const vscode = require('vscode');
+import * as vscode from 'vscode';
 
-const commands = require('./sqlrunner/vscode/commands');
-const TablesPanel = require('./sqlrunner/vscode/tables_panel');
+import * as commands from './sqlrunner/vscode/commands';
 
-function addCommand(context, name, command) {
+function addCommand(context : vscode.ExtensionContext, name : string, command: commands.Command) {
+    console.log(`Registering command: ${name}`);
     context.subscriptions.push(vscode.commands.registerCommand(name, () => command(context)));
 }
 
-/**
- * @param {vscode.ExtensionContext} context 
- * @param {string} viewType 
- * @param {vscode.WebviewViewProvider} viewProvider 
- */
-function addWebviewProvider(context, viewType, viewProvider) {
+function addWebviewProvider(context: vscode.ExtensionContext, viewType: string, viewProvider: vscode.WebviewViewProvider) {
+    console.log(`window: ${vscode.window}`);
     context.subscriptions.push(vscode.window.registerWebviewViewProvider(viewType, viewProvider));
 }
 
-/**
- * @param {vscode.ExtensionContext} context
- */
-function activate(context) {
+export function activate(context: vscode.ExtensionContext) {
     console.log('SQL Runner activated!!!');
 
     const [viewType, provider] = commands.initTablesPanel(context);
@@ -36,9 +29,6 @@ function activate(context) {
 exports.activate = activate;
 
 // this method is called when your extension is deactivated
-function deactivate() {}
-
-module.exports = {
-    activate,
-    deactivate
+export function deactivate() {
+    console.log('Deactivating extension'); // Only here to shut up eslint
 }

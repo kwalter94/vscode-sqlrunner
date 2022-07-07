@@ -1,16 +1,19 @@
-const fs = require('fs');
-const handlebars = require('handlebars');
-const vscode = require('vscode');
+import * as fs from 'fs';
+import * as handlebars from 'handlebars';
+import * as vscode from 'vscode';
 
 /**
  * Render handlebars templates for a given webview.
  */
-class HbsTemplateRenderer {
+export default class HbsTemplateRenderer {
+    private extensionUri: vscode.Uri;
+    private webview: vscode.Webview;
+
     /**
      * @param {vscode.Uri} extensionUri 
      * @param {vscode.Webview} webview
      */
-    constructor(extensionUri, webview) {
+    constructor(extensionUri: vscode.Uri, webview: vscode.Webview) {
         this.extensionUri = extensionUri;
         this.webview = webview;
         this.initHandlebars();
@@ -22,29 +25,27 @@ class HbsTemplateRenderer {
      * @param template {string}
      * @param context {Object}
      */
-    render(template, context) {
+    render(template: string, context: object): string {
         try {
             const templateData = fs.readFileSync(this.mediaPath(template).fsPath);
             const render = handlebars.compile(templateData.toString());
-            const html = render(context)
-
-            console.log(html);
+            const html = render(context);
 
             return html;
-        } catch (error) {
-            throw new Error(`Failed to compile index.hbs: ${error.message}`)
+        } catch (error: any) {
+            throw new Error(`Failed to compile index.hbs: ${error.message}`);
         }
     }
 
-    mediaPath(file) {
+    mediaPath(file: string): vscode.Uri {
         return vscode.Uri.joinPath(this.extensionUri, 'media', file);
     }
 
-    mediaUri(file) {
+    mediaUri(file: string): vscode.Uri {
         return this.webview.asWebviewUri(this.mediaPath(file));
     }
 
-    nonce() {
+    nonce(): string {
         let text = '';
         const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
@@ -56,13 +57,8 @@ class HbsTemplateRenderer {
     }
 
     initHandlebars() {
-        const context = this;
-        const nonce = this.nonce();
-
-        handlebars.registerHelper('media_uri', function(file) { return context.mediaUri(file) });
-        handlebars.registerHelper('nonce', function() { return nonce });
-        handlebars.registerHelper('csp_source', function() { return context.webview.cspSource });
+        handlebars.registerHelper('media_uri', (file) => this.mediaUri(file));
+        handlebars.registerHelper('nonce', () => this.nonce);
+        handlebars.registerHelper('csp_source', () => this.webview.cspSource);
     }
 }
-
-module.exports = HbsTemplateRenderer;

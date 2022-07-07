@@ -1,24 +1,27 @@
-const { Pool } = require('pg');
-const { unpackObject } = require('../utils');
+import { SqlConnectionAdapter, SqlConnectionParameters, SqlResult } from "../plugin";
 
-class Postgres {
-    constructor(user, password, host, port, database) {
-        this.connectionPool = new Pool({host, port, user, password, database})
+import * as pg from 'pg';
+
+export class PostgresConnectionAdapter implements SqlConnectionAdapter {
+    private connectionPool: pg.Pool;
+
+    constructor({username: user, password, host, port, database}: SqlConnectionParameters) {
+        this.connectionPool = new pg.Pool({host, port, user, password, database});
     }
 
     close() {
         this.connectionPool.end();
     }
 
-    async runQuery(query) {
+    async runQuery(query: string): Promise<SqlResult> {
         const response = await this.connectionPool.query(query);
         const columnNames = response.fields.map(field => field.name);
-        const rows = response.rows.map(row => unpackObject(row, columnNames));
+        const rows = response.rows.map(row => columnNames.map(columnName => String(row[columnName])));
 
         return {columnNames, rows};
     }
 
-    async getTables() {
+    async getTables(): Promise<string[]> {
         const {rows} = await this.runQuery(`
             SELECT table_name
             FROM information_schema.tables
@@ -26,10 +29,10 @@ class Postgres {
             ORDER BY table_name
         `);
 
-        return rows;
+        return rows.map(([table]) => table);
     }
 
-    async describeTable(table) {
+    async describeTable(table: string): Promise<SqlResult> {
         return this.runQuery(`
             SELECT column_name,
                    data_type,
@@ -41,5 +44,3 @@ class Postgres {
         `);
     }
 }
-
-module.exports = Postgres;
