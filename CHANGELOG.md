@@ -6,6 +6,15 @@ and removed features go under `Deprecated` and `Removed` respectively.
 
 ## Unreleased
 
+### Added
+
+- Activity bar entry for SQL Runner (database icon)
+- SQL Runner TreeView based database explorer
+
+### Removed
+
+- SQL Runner WebView based database explorer
+
 ## [0.1.1] - 2021-03-15
 
 ### Fixed

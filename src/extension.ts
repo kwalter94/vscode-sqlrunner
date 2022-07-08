@@ -6,27 +6,16 @@ import * as commands from './sqlrunner/vscode/commands';
 
 function addCommand(context : vscode.ExtensionContext, name : string, command: commands.Command) {
     console.log(`Registering command: ${name}`);
-    context.subscriptions.push(vscode.commands.registerCommand(name, () => command(context)));
-}
-
-function addWebviewProvider(context: vscode.ExtensionContext, viewType: string, viewProvider: vscode.WebviewViewProvider) {
-    console.log(`window: ${vscode.window}`);
-    context.subscriptions.push(vscode.window.registerWebviewViewProvider(viewType, viewProvider));
+    context.subscriptions.push(vscode.commands.registerCommand(name, (...args) => command(context, args)));
 }
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('SQL Runner activated!!!');
-
-    const [viewType, provider] = commands.initTablesPanel(context);
-
-    addWebviewProvider(context, viewType, provider);
-
     addCommand(context, 'sqlrunner.connectToDatabase', commands.connectToDatabase);
     addCommand(context, 'sqlrunner.refreshTables', commands.loadTables);
     addCommand(context, 'sqlrunner.runQuery', commands.runQuery);
+    addCommand(context, 'sqlrunner.describeTable', commands.describeTable);
 }
-
-exports.activate = activate;
 
 // this method is called when your extension is deactivated
 export function deactivate() {

@@ -2,43 +2,29 @@ import * as vscode from 'vscode';
 
 import SqlConnection from '../sql_connection';
 import SqlResultsView from './sql_results_view';
-import { TablesPanel, VIEW_ID } from './tables_panel';
 import { getDatabaseConnectionString, getQuery } from './editor';
 import { timeIt } from '../utils';
+import { DatabaseObjectsTreeProvider } from './database_objects_tree_provider';
 
-export type Command = (context: vscode.ExtensionContext) => void;
+export type Command = (context: vscode.ExtensionContext, args: any[]) => void;
 
 interface ExtensionState {
     connection: SqlConnection | null;
     resultsView: SqlResultsView | null;
-    tablesPanel: TablesPanel | null;
 }
 
-const state: ExtensionState = {connection: null, resultsView: null, tablesPanel: null};
+// NOTE: This should only be accessed through `extensionState()`, never directly.
+const state: ExtensionState = {connection: null, resultsView: null};
 
-export function initTablesPanel(context: vscode.ExtensionContext): [string, TablesPanel] {
-    // TODO: Have to figure out where to place this function.
-    //       Seems out of place being within the commands module.
-    const onTableClicked = async (event: any) => {
-        const state = await extensionState(context);
-        if (!state?.connection) return;
-
-        const results = await state.connection.describeTable(event.table);
-        state.resultsView?.showResults({...results, time: null});
-    };
-
-    state.tablesPanel = new TablesPanel(context.extensionUri, {onTableClicked});
-
-    return [VIEW_ID, state.tablesPanel];
-}
-
-async function extensionState(context: vscode.ExtensionContext): Promise<ExtensionState> {
+async function extensionState(context: vscode.ExtensionContext, {initialiseResultsView} = {initialiseResultsView: true}):
+    Promise<ExtensionState>
+{
     console.log('Retrieving/Creating extension state...');
     if (!state.connection) {
         await connectToDatabase(context);
     }
 
-    if (!state.resultsView) {
+    if (initialiseResultsView && !state.resultsView) {
         state.resultsView = new SqlResultsView(context.extensionUri, {onDispose: destroyExtensionState});
     }
 
@@ -50,13 +36,12 @@ function destroyExtensionState() {
     state.connection?.close();
     state.connection = null;
     state.resultsView = null;
-    state.tablesPanel = null;
 }
 
 /**
  * Attempt to make a database connection.
  */
-export async function connectToDatabase(context: vscode.ExtensionContext, rejectedConnectionString: string | null = null) {
+export async function connectToDatabase(context: vscode.ExtensionContext, _args: any[] = [], rejectedConnectionString: string | null = null) {
     console.log('Connecting to database...');
     if (state.connection) {
         console.log(`Disconnecting database ${state.connection.getName()}...`);
@@ -74,12 +59,12 @@ export async function connectToDatabase(context: vscode.ExtensionContext, reject
     try {
         console.log(`Connecting to database: ${connectionString}`);
         state.connection = SqlConnection.fromConnectionString(connectionString);
-        await loadTables();
+        await loadTables(context);
         vscode.window.showInformationMessage(`Connected to database: ${state.connection.getName()}`);
     } catch (e: any) {
         console.error(`Error connecting to database: ${e}`);
         vscode.window.showErrorMessage(`Failed to establish database connection: ${e}`);
-        connectToDatabase(context, connectionString);
+        connectToDatabase(context, [], connectionString);
     }
 }
 
@@ -88,7 +73,7 @@ export async function connectToDatabase(context: vscode.ExtensionContext, reject
  * 
  * @param {vscode.ExtensionContext} context
  */
-export async function runQuery(context: vscode.ExtensionContext) {
+export async function runQuery(context: vscode.ExtensionContext, _args: any[]) {
     const state = await extensionState(context);
     const query = await getQuery();
 
@@ -113,9 +98,29 @@ export async function runQuery(context: vscode.ExtensionContext) {
     }
 }
 
-export async function loadTables() {
-    if (!state.tablesPanel) return;
+export async function loadTables(context: vscode.ExtensionContext, _args: any = null) {
+    const state = await extensionState(context, {initialiseResultsView: false});
 
-    const tables = await state.connection?.getTables();
-    state.tablesPanel.setTables(tables || []);
+    if (!state.connection) {
+        console.warn('Failed to load tables: No connection available');
+        return;
+    }
+
+    const dbObjectsProvider = new DatabaseObjectsTreeProvider(state.connection);
+    vscode.window.registerTreeDataProvider('sqlrunner-database-objects', dbObjectsProvider);
+}
+
+export async function describeTable(context: vscode.ExtensionContext, [table, ..._]: any[]) {
+    const state = await extensionState(context);
+
+    if (!state.connection) {
+        vscode.window.showErrorMessage('Failed to describe table: Connection not available');
+        return;
+    }
+    
+    const tableName: string = table.getName();
+
+    console.log(`Describing table: ${tableName}`);
+    const results = await state.connection.describeTable(tableName);
+    state.resultsView?.showResults({...results, time: null});
 }

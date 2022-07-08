@@ -1,83 +1,119 @@
 {
-	"name": "sqlrunner",
-	"displayName": "SqlRunner",
-	"description": "Run some SQL in MySQL client.",
-	"publisher": "kwalter94",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/kwalter94/vscode-sqlrunner"
-	},
-	"version": "0.1.0",
-	"engines": {
-		"vscode": "^1.50.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onCommand:sqlrunner.runQuery",
-		"onCommand:sqlrunner.connectToDatabase"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "sqlrunner.runQuery",
-				"title": "SQL Runner: Run SQL"
-			},
-			{
-				"command": "sqlrunner.connectToDatabase",
-				"title": "SQL Runner: Connect to database"
-			},
-			{
-				"command": "sqlrunner.refreshTables",
-				"title": "SQL Runner: Refresh Tables"
-			}
-		],
-		"keybindings": [
-			{
-				"key": "alt+q e",
-				"command": "sqlrunner.runQuery",
-				"when": "editorTextFocus"
-			}
-		],
-		"views": {
-			"explorer": [
-				{
-					"type": "webview",
-					"id": "sqlrunner.tables_panel",
-					"name": "SQL Runner DB Tables"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"lint": "eslint --ext .tx,.tsx",
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -w -p ./",
-		"test-compile": "tsc -p ./",
-		"pretest": "yarn run lint",
-		"test": "yarn run compile && node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/glob": "^7.1.3",
-		"@types/mocha": "^8.0.0",
-		"@types/mysql": "^2.15.21",
-		"@types/node": "^12.11.7",
-		"@types/pg": "^8.6.5",
-		"@types/vscode": "^1.50.0",
-		"@typescript-eslint/eslint-plugin": "^5.30.0",
-		"@typescript-eslint/parser": "^5.30.0",
-		"@vscode/test-electron": "^2.1.5",
-		"eslint": "^8.13.0",
-		"glob": "^7.1.6",
-		"mocha": "^8.1.3",
-		"typescript": "^4.7.2"
-	},
-	"dependencies": {
-		"handlebars": "^4.7.6",
-		"mysql": "^2.18.1",
-		"pg": "^8.5.0"
-	}
+    "name": "sqlrunner",
+    "displayName": "SqlRunner",
+    "description": "Run some SQL in MySQL client.",
+    "publisher": "kwalter94",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kwalter94/vscode-sqlrunner"
+    },
+    "version": "0.1.0",
+    "engines": {
+        "vscode": "^1.50.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:sqlrunner.runQuery",
+        "onCommand:sqlrunner.connectToDatabase"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "sqlrunner.runQuery",
+                "title": "SQL Runner: Run SQL"
+            },
+            {
+                "command": "sqlrunner.connectToDatabase",
+                "title": "SQL Runner: Connect to database",
+                "icon": "media/images/plug-solid.svg"
+            },
+            {
+                "command": "sqlrunner.refreshTables",
+                "title": "SQL Runner: Refresh Tables",
+                "icon": "media/images/arrows-rotate-solid.svg"
+            },
+            {
+                "command": "sqlrunner.describeTable",
+                "title": "SQL Runner: Describe Table"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "sqlrunner.connectToDatabase",
+                    "when": "view == sqlrunner-database-objects",
+                    "group": "navigation"
+                },
+                {
+                    "command": "sqlrunner.refreshTables",
+                    "when": "view == sqlrunner-database-objects",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "sqlrunner.describeTable",
+                    "when": "view == sqlrunner-database-objects && viewItem == table",
+                    "group": "inline"
+                }
+            ]
+        },
+        "keybindings": [
+            {
+                "key": "alt+q e",
+                "command": "sqlrunner.runQuery",
+                "when": "editorTextFocus"
+            }
+        ],
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "sqlrunner-explorer",
+                    "title": "SQL Runner",
+                    "icon": "media/images/database-solid.svg"
+                }
+            ]
+        },
+        "views": {
+            "sqlrunner-explorer": [
+                {
+                    "id": "sqlrunner-database-objects",
+                    "name": "Database Objects",
+                    "icon": "media/images/table-solid.svg"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "lint": "eslint --ext .tx,.tsx",
+        "vscode:prepublish": "yarn run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -w -p ./",
+        "test-compile": "tsc -p ./",
+        "pretest": "yarn run lint",
+        "test": "yarn run compile && node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "@types/glob": "^7.1.3",
+        "@types/mocha": "^8.0.0",
+        "@types/mysql": "^2.15.21",
+        "@types/node": "^12.11.7",
+        "@types/pg": "^8.6.5",
+        "@types/vscode": "^1.50.0",
+        "@typescript-eslint/eslint-plugin": "^5.30.0",
+        "@typescript-eslint/parser": "^5.30.0",
+        "@vscode/test-electron": "^2.1.5",
+        "eslint": "^8.13.0",
+        "glob": "^7.1.6",
+        "mocha": "^8.1.3",
+        "typescript": "^4.7.2"
+    },
+    "dependencies": {
+        "handlebars": "^4.7.6",
+        "mysql": "^2.18.1",
+        "pg": "^8.5.0"
+    }
 }
